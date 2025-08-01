@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# File containing AWS account IDs (one per line)
+account_file="awsAccounts.txt"
+
+# AWS config file location
+aws_config_file="$HOME/.aws/config"
+
+# SSO session name. Replace with your own session name
+sso_session=""
+
+# Role name, region, and output format
+sso_role_name="AWSReadOnlyAccess"
+region="us-east-1" #replace with region
+output="json"
+
+# Backup the original config file
+cp "$aws_config_file" "$aws_config_file.bak.$(date +%s)"
+
+# Read each account ID from the file and create a profile
+while IFS= read -r account_id; do
+    # Skip empty lines
+    [ -z "$account_id" ] && continue
+    
+    cat <<EOF >> "$aws_config_file"
+
+[profile AWSReadOnlyAccess-$account_id]
+sso_session = $sso_session
+sso_account_id = $account_id
+sso_role_name = $sso_role_name
+region = $region
+output = $output
+EOF
+done < "$account_file"
+
+echo "AWS profiles have been added to $aws_config_file."
+
