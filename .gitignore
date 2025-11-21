@@ -1,0 +1,104 @@
+# ---------------------------------------------------------
+# PYTHON
+# ---------------------------------------------------------
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+pip-wheel-metadata/
+
+# Virtual environments
+venv/
+env/
+.venv/
+ENV/
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+.coverage
+coverage.xml
+htmlcov/
+.tox/
+.nox/
+pytest_cache/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Python project local settings
+*.log
+*.pot
+*.pyproj
+.pytest_cache/
+
+# Mypy, pytype, pylance
+.mypy_cache/
+.pyre/
+.pytype/
+typings/
+
+# Bandit
+bandit.yaml
+
+# Editor artifacts
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ---------------------------------------------------------
+# BASH / SHELL SCRIPTS
+# ---------------------------------------------------------
+
+# No need to ignore *.sh — usually kept in version control.
+# But ignore compiled/machine-specific outputs:
+
+*.out
+*.o
+*.tmp
+
+# History or environment files (security hygiene)
+*.env
+*.secret
+*.secrets
+.env.local
+.envrc
+
+# macOS
+.DS_Store
+
+# Linux temp
+*~
+
+# ---------------------------------------------------------
+# GENERAL (cross-language)
+# ---------------------------------------------------------
+
+# Logs
+*.log
+
+# Backup files
+*.bak
+
+# System files
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+
+
