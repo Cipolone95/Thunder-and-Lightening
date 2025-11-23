@@ -4,6 +4,8 @@ import sys
 import argparse
 from pathlib import Path
 
+import variables
+
 def load_scoutsuite_js(path):
     """
     Load ScoutSuite JS file by stripping the var assignment and parsing the JSON.
@@ -19,22 +21,14 @@ def load_scoutsuite_js(path):
     return json.loads(data)
 
 
-def get_vulnerable_cloudstorage(data):
-    findings = data.get("services", {}).get("cloudstorage", {}).get("findings", {})
-    projects = data.get("services", {}).get("cloudstorage", {}).get("projects", {})
-    open_cloudstorage_buckets = []
+def get_vulnerable_resources(data, service):
+    findings = data.get("services", {}).get(service, {}).get("findings", {})
+    projects = data.get("services", {}).get(service, {}).get("projects", {})
+    resourceNames = []
 
-    #GCP Bucket Checks List
-    bucket_checks = [
-        "cloudstorage-bucket-allAuthenticatedUsers",
-        "cloudstorage-bucket-allUsers",
-        "cloudstorage-bucket-no-logging",
-        "cloudstorage-bucket-no-public-access-prevention",
-        "cloudstorage-bucket-no-versioning",
-        "cloudstorage-uniform-bucket-level-access-disabled"
-    ]
 
-    for check in bucket_checks:
+
+    for check in variables.f"{service}_checks":
         finding = findings.get(check, {})
         flagged = finding.get("flagged_items", [])
 
@@ -52,16 +46,26 @@ def get_vulnerable_cloudstorage(data):
 
 def main():
     
-    parser = argparse.ArgumentParser(description="Get Bucket Exposure. This script reviews the scoutsuite data and collects info on the buckets.")
+    parser = argparse.ArgumentParser(description="Parses ScoutSuite data. This script reviews the scoutsuite data and collects info on the provided cloud service(s).")
     parser.add_argument("--input-file", help="Scoutsuite results JS file.")
     parser.add_argument("--input-directory", help="a directory containing all of the scoutsuite projects.")
     parser.add_argument("--project-list", help="A txt file containing a list of all projects you want checked. Helpful for splitting out data.")
-    parser.add_argument("--output-file", action="store_true", help="Specify an output file to dump all of the data. Default is stdOut.")
+    parser.add_argument("--output-file", help="Specify an output file to dump all of the data. Default is stdOut.")
+    parser.add_argument("--type", help="Comma separated list of services. All services will be checked if no specified. Available services are bigquery,memorystore,cloudsql,cloudstorage,computeengine,dns,functions,iam,kms,kubernetesengine,stackdriverlogging,stackdrivermonitoring ")
     args = parser.parse_args()
 
+    services = []
+    
+    #Either we pass in the services we want or we check all of them.
+    if args.type:
+        services = args.type.split(",")
+    else:
+        services = variables.allServices
+    
     if args.input_file:
         data = load_scoutsuite_js(args.input_file)
-        storageNames = get_vulnerable_cloudstorage(data)
+        for service in services:
+            resourceNames = get_vulnerable_resources(data, service)
     
     if args.project_list and args.input_directory:
         projectFile = args.project_list
