@@ -5,6 +5,7 @@ import argparse
 from pathlib import Path
 
 import variables
+import iam
 
 def load_scoutsuite_js(path):
     """
@@ -26,26 +27,47 @@ def get_vulnerable_resources(data, service):
     projects = data.get("services", {}).get(service, {}).get("projects", {})
     resourceNames = []
 
-
-
     for check in getattr(variables, f"{service}_checks"):
         finding = findings.get(check, {})
         flagged = finding.get("flagged_items", [])
 
         if flagged > 0:
             print(f"[-] {service} vulnerable to check {check}")
-            vulnerableResources = finding.get("items",[])
-            for resource in vulnerableResources:
-                resourceBase = resource.rsplit(".", 1)[0]
-                parts = resourceBase.split(".")
-                resourcePath = data.get("services", {})
-                for p in parts:
-                    resourcePath = resourcePath.get(p, {})
-                resourceName = resourcePath.get("name", {})
-                print(resourceName)
-            print("\n")
 
-    return list(resourceNames)
+            
+            if check == "iam-lack-of-service-account-key-rotation":
+                serviceObject = globals().get(service)
+                method = getattr(serviceObject, "getResources")
+                vulnerableResourceNames = method(data, service, check)
+                for name in vulnerableResourceNames:
+                    print(name)
+            elif check == "iam-sa-has-admin-privileges":
+                serviceObject = globals().get(service)
+                method = getattr(serviceObject, "getResources")
+                vulnerableResourceNames = method(data, service, check)
+                for name in vulnerableResourceNames:
+                    print(name)
+            else:
+                vulnerableResources = finding.get("items",[])
+                for resource in vulnerableResources:
+                    resourceBase = resource.rsplit(".", 1)[0]
+                    parts = resourceBase.split(".")
+                    resourcePath = data.get("services", {})
+                    for p in parts:
+                        resourcePath = resourcePath.get(p, {})
+                    resourceName = resourcePath.get("name", {})
+                    print(resourceName)
+                    vulnerableResourceNames.append(resourceName)
+                print("\n")
+
+    return vulnerableResourceNames
+
+
+
+
+
+
+
 
 def main():
     

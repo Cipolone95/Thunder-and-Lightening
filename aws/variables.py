@@ -91,11 +91,11 @@ functions_checks = [
 
 iam_checks = [
   "iam-gmail-accounts-used",
-  "iam-lack-of-service-account-key-rotation",
+  #"iam-lack-of-service-account-key-rotation",
   "iam-primitive-role-in-use",
   "iam-role-account-separation-duties-is-false",
   "iam-role-assigned-to-domain",
-  #"iam-role-assigned-to-user",
+  "iam-role-assigned-to-user",
   "iam-role-kms-separation-duties-is-false",
   "iam-sa-has-admin-privileges",
   "iam-service-account-user-allAuthenticatedUsers",
