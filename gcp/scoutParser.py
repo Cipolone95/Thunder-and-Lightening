@@ -28,21 +28,38 @@ def get_vulnerable_resources(data, service):
 
 
 
-    for check in variables.f"{service}_checks":
+    for check in getattr(variables, f"{service}_checks"):
         finding = findings.get(check, {})
         flagged = finding.get("flagged_items", [])
 
         if flagged > 0:
-            print(f"[-] Cloudstorage Buckets Vulnerable to check {check}")
-            bucketItems = finding.get("items",[])
-            for bucketItem in bucketItems:
-                bucketHash = bucketItem.split(".")[4]
-                for project in projects: #will probably be some weird edge cases here at some point.
-                    bucketName = projects.get(project, {}).get("buckets", {}).get(bucketHash, {}).get("name", {})
-                    print(bucketName)
+            print(f"[-] {service} vulnerable to check {check}")
+            vulnerableResources = finding.get("items",[])
+            for resource in vulnerableResources:
+                #resourceHash = resource.split(".")[4]
+                # for project in projects: #will probably be some weird edge cases here at some point.
+                #     resourceName = projects.get(project, {}).get("buckets", {}).get(bucketHash, {}).get("name", {})
+                #     print(bucketName)
+                #print(resource)
+                if check == "computeengine-instance-disk-not-csek-encrypted":
+                    print(resource)
+                resourceBase = resource.rsplit(".", 1)[0]
+                parts = resourceBase.split(".")
+                if check == "computeengine-instance-disk-not-csek-encrypted":
+                    print(parts)
+                #print(parts)
+                resourcePath = data.get("services", {})
+                for p in parts:
+                    resourcePath = resourcePath.get(str(p), {})
+                
+                #resourcePath = append(resourcePath, get("name" {}))
+                    
+                #print(resource)
+                resourceName = resourcePath.get("name", {})
+                print(resourceName)
             print("\n")
 
-    return list(set(open_cloudstorage_buckets))
+    return list(set(resourceNames))
 
 def main():
     
@@ -65,6 +82,7 @@ def main():
     if args.input_file:
         data = load_scoutsuite_js(args.input_file)
         for service in services:
+            print(f"[+] Check service {service} for misconfigurations.")
             resourceNames = get_vulnerable_resources(data, service)
     
     if args.project_list and args.input_directory:
