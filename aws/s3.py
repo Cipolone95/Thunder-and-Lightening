@@ -58,47 +58,16 @@ def getResources(data, service, check):
     #print(finding)
     #flagged = finding.get("flagged_items", [])
 
-    if check == "s3-bucket-AllUsers-read":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "s3-bucket-AllUsers-read_acp":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")      
-    elif check == "s3-bucket-AllUsers-write":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "s3-bucket-AllUsers-write_acp":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "s3-bucket-AuthenticatedUsers-read":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "s3-bucket-AuthenticatedUsers-read_acp":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "s3-bucket-AuthenticatedUsers-write":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "s3-bucket-AuthenticatedUsers-write_acp":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")     
-    elif check == "s3-bucket-allowing-cleartext":
-        vulnerableResourceNames = getStandardARNs(finding, check, data)
-    elif check == "s3-bucket-no-default-encryption":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "s3-bucket-no-logging":
-        vulnerableResourceNames = getStandardARNs(finding, check, data)
-    elif check == "s3-bucket-no-mfa-delete":
-        vulnerableResourceNames = getStandardARNs(finding, check, data)
-    elif check == "s3-bucket-no-versioning":
-        vulnerableResourceNames = getStandardARNs(finding, check, data)
-    elif check == "s3-bucket-world-Delete-policy":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "s3-bucket-world-Get-policy":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "s3-bucket-world-List-policy":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "s3-bucket-world-Manage-policy":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "s3-bucket-world-Put-policy":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "s3-bucket-world-policy-star":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
+    if check in ("s3-bucket-AllUsers-read",
+                    "s3-bucket-allowing-cleartext",
+                    "s3-bucket-no-logging",
+                    "s3-bucket-no-mfa-delete",
+                    "s3-bucket-no-versioning"):
+        vulnerableResourceNames = getStandardARNs(finding, check, data)    
     else:
-        print(test)
+        print(f"[!] HELP! {check} is a new check and needs some logic!")
         #Do nothing at this point. 
+    
     
     return vulnerableResourceNames
     

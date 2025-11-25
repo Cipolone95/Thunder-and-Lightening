@@ -75,72 +75,24 @@ def getResources(data, service, check):
     #flagged = finding.get("flagged_items", [])
 
 
-    if check == "iam-assume-role-lacks-external-id-and-mfa":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "iam-assume-role-policy-allows-all":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "iam-ec2-role-without-instances":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "iam-group-with-inline-policies":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "iam-group-with-no-users":
+    
+    if check in ("iam-group-with-no-users",
+                    "iam-inline-group-policy-allows-NotActions",
+                    "iam-managed-policy-allows-NotActions",
+                    "iam-managed-policy-allows-iam-PassRole",
+                    "iam-managed-policy-allows-sts-AssumeRole",
+                    "iam-role-with-inline-policies",
+                    "iam-root-account-no-mfa",
+                    "iam-user-no-Active-key-rotation",
+                    "iam-user-with-multiple-access-keys",
+                    "iam-user-with-password-and-key",
+                    "iam-user-without-mfa"):
         vulnerableResourceNames = getStandardARNs(finding, check, data)
-    elif check == "iam-inline-group-policy-allows-NotActions":
-        vulnerableResourceNames = getStandardARNs(finding, check, data)
-    elif check == "iam-inline-group-policy-allows-iam-PassRole":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "iam-inline-group-policy-allows-sts-AssumeRole":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "iam-inline-role-policy-allows-NotActions":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "iam-inline-role-policy-allows-iam-PassRole":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "iam-inline-role-policy-allows-sts-AssumeRole":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "iam-inline-user-policy-allows-NotActions":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "iam-inline-user-policy-allows-iam-PassRole":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "iam-inline-user-policy-allows-sts-AssumeRole":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "iam-managed-policy-allows-NotActions":
-        vulnerableResourceNames = getStandardARNs(finding, check, data)
-    elif check == "iam-managed-policy-allows-iam-PassRole":
-        vulnerableResourceNames = getStandardARNs(finding, check, data)
-    elif check == "iam-managed-policy-allows-sts-AssumeRole":
-        vulnerableResourceNames = getStandardARNs(finding, check, data)
-    elif check == "iam-managed-policy-no-attachments":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "iam-password-policy-minimum-length":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "iam-password-policy-no-expiration":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "iam-password-policy-reuse-enabled":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "iam-role-with-inline-policies":
-        vulnerableResourceNames = getStandardARNs(finding, check, data)
-    elif check == "iam-root-account-no-mfa":
-        vulnerableResourceNames = getStandardARNs(finding, check, data)
-    elif check == "iam-root-account-used-recently":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "iam-root-account-with-active-certs":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
     elif check == "iam-root-account-with-active-keys":
         vulnerableResourceNames = getRootLoginInformation(finding, data)
-    elif check == "iam-user-no-Active-key-rotation":
-        vulnerableResourceNames = getStandardARNs(finding, check, data)
-    elif check == "iam-user-no-Inactive-key-rotation":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "iam-user-with-inline-policies":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "iam-user-with-multiple-access-keys":
-        vulnerableResourceNames = getStandardARNs(finding, check, data)
-    elif check == "iam-user-with-password-and-key":
-        vulnerableResourceNames = getStandardARNs(finding, check, data)
-    elif check == "iam-user-without-mfa":
-        vulnerableResourceNames = getStandardARNs(finding, check, data)
     else:
-        print(f"[+] {check} is handled elsewhere.") 
+        print(f"[!] HELP! {check} is a new check and needs some logic!")
+    
     
     return vulnerableResourceNames
     

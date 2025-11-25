@@ -52,63 +52,21 @@ def getResources(data, service, check):
     #flagged = finding.get("flagged_items", [])
 
 
-    if check == "ec2-ami-public":
-        #print(f"[!] HELP! {check} is a new check and needs some logic!")
-        vulnerableResourceNames = getStandardARNs(finding, check, data)
-    elif check == "ec2-default-security-group-in-use":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "ec2-default-security-group-with-rules":
-        vulnerableResourceNames = getStandardARNs(finding, check, data)
-    elif check == "ec2-ebs-snapshot-not-encrypted":
-        vulnerableResourceNames = getStandardARNs(finding, check, data)
-    elif check == "ec2-ebs-snapshot-public":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "ec2-ebs-volume-not-encrypted":
-        vulnerableResourceNames = getStandardARNs(finding, check, data)
-    elif check == "ec2-instance-with-user-data-secrets":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "ec2-security-group-opens-DNS-port-to-all":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "ec2-security-group-opens-MongoDB-port-to-all":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "ec2-security-group-opens-MsSQL-port-to-all":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "ec2-security-group-opens-MySQL-port-to-all":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "ec2-security-group-opens-NFS-port-to-all":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "ec2-security-group-opens-Oracle DB-port-to-all":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "ec2-security-group-opens-PostgreSQL-port-to-all":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "ec2-security-group-opens-RDP-port-to-all":
-        vulnerableResourceNames = getStandardARNs(finding, check, data)
-    elif check == "ec2-security-group-opens-SMTP-port-to-all":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "ec2-security-group-opens-SSH-port-to-all":
-        vulnerableResourceNames = getStandardARNs(finding, check, data)
-    elif check == "ec2-security-group-opens-TCP-port-to-all":
-        vulnerableResourceNames = getStandardARNs(finding, check, data)
-    elif check == "ec2-security-group-opens-UDP-port-to-all":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "ec2-security-group-opens-all-ports":
-        vulnerableResourceNames = getStandardARNs(finding, check, data)
-    elif check == "ec2-security-group-opens-all-ports-to-all":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "ec2-security-group-opens-all-ports-to-self":
-        vulnerableResourceNames = getStandardARNs(finding, check, data)
-    elif check == "ec2-security-group-opens-plaintext-port-FTP":
-        vulnerableResourceNames = getStandardARNs(finding, check, data)
-    elif check == "ec2-security-group-opens-plaintext-port-Telnet":
-        print(f"[!] HELP! {check} is a new check and needs some logic!")
-    elif check == "ec2-security-group-opens-port-range":
-        vulnerableResourceNames = getStandardARNs(finding, check, data)
-    elif check == "ec2-security-group-whitelists-aws":
-        vulnerableResourceNames = getStandardARNs(finding, check, data)
-    elif check == "ec2-unused-security-group":
+    if check in ("ec2-default-security-group-with-rules",
+                    "ec2-ebs-snapshot-not-encrypted",
+                    "ec2-ebs-volume-not-encrypted",
+                    "ec2-security-group-opens-RDP-port-to-all",
+                    "ec2-security-group-opens-SSH-port-to-all",
+                    "ec2-security-group-opens-TCP-port-to-all",
+                    "ec2-security-group-opens-all-ports",
+                    "ec2-security-group-opens-all-ports-to-self",
+                    "ec2-security-group-opens-plaintext-port-FTP",
+                    "ec2-security-group-opens-port-range",
+                    "ec2-security-group-whitelists-aws",
+                    "ec2-unused-security-group"):
         vulnerableResourceNames = getStandardARNs(finding, check, data)
     else:
-        print(f"[+] {check} is handled elsewhere.")
+        print(f"[!] HELP! {check} is a new check and needs some logic!")
     
     return vulnerableResourceNames
     
