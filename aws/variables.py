@@ -120,14 +120,14 @@ kms_checks = [
 ]
 
 rds_checks = [
-  # "rds-instance-backup-disabled",
-  # "rds-instance-ca-certificate-deprecated",
-  # "rds-instance-no-minor-upgrade",
-  # "rds-instance-short-backup-retention-period",
-  # "rds-instance-single-az",
-  # "rds-instance-storage-not-encrypted",
-  # "rds-security-group-allows-all",
-  # "rds-snapshot-public"
+  "rds-instance-backup-disabled",
+  "rds-instance-ca-certificate-deprecated",
+  "rds-instance-no-minor-upgrade",
+  "rds-instance-short-backup-retention-period",
+  "rds-instance-single-az",
+  "rds-instance-storage-not-encrypted",
+  "rds-security-group-allows-all",
+  "rds-snapshot-public"
 ]
 
 redshift_checks = [
@@ -177,13 +177,13 @@ ses_checks = [
 ]
 
 sns_checks = [
-  # "sns-topic-world-AddPermission-policy",
-  # "sns-topic-world-DeleteTopic-policy",
-  # "sns-topic-world-Publish-policy",
-  # "sns-topic-world-Receive-policy",
-  # "sns-topic-world-RemovePermission-policy",
-  # "sns-topic-world-SetTopicAttributes-policy",
-  # "sns-topic-world-Subscribe-policy"
+  "sns-topic-world-AddPermission-policy",
+  "sns-topic-world-DeleteTopic-policy",
+  "sns-topic-world-Publish-policy",
+  "sns-topic-world-Receive-policy",
+  "sns-topic-world-RemovePermission-policy",
+  "sns-topic-world-SetTopicAttributes-policy",
+  "sns-topic-world-Subscribe-policy"
 ]
 
 sqs_checks = [
