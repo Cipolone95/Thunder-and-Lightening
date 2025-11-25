@@ -8,6 +8,7 @@ import variables
 import s3
 import iam
 import kms
+import ec2
 
 def load_scoutsuite_js(path):
     """
