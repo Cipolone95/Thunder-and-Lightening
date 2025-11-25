@@ -99,9 +99,9 @@ iam_checks = [
   "iam-managed-policy-allows-iam-PassRole",
   "iam-managed-policy-allows-sts-AssumeRole",
   "iam-managed-policy-no-attachments",
-  "iam-password-policy-minimum-length",
-  "iam-password-policy-no-expiration",
-  "iam-password-policy-reuse-enabled",
+  #"iam-password-policy-minimum-length",
+  #"iam-password-policy-no-expiration",
+  #"iam-password-policy-reuse-enabled",
   "iam-role-with-inline-policies",
   "iam-root-account-no-mfa",
   "iam-root-account-used-recently",
@@ -115,7 +115,9 @@ iam_checks = [
   "iam-user-without-mfa"
 ]
 
-kms_checks = []
+kms_checks = [
+  "kms-cmk-rotation-disabled"
+]
 
 rds_checks = [
   # "rds-instance-backup-disabled",
@@ -144,25 +146,25 @@ route53_checks = [
 ]
 
 s3_checks = [
-  #"s3-bucket-AllUsers-read",
-  # "s3-bucket-AllUsers-read_acp",
-  # "s3-bucket-AllUsers-write",
-  # "s3-bucket-AllUsers-write_acp",
-  # "s3-bucket-AuthenticatedUsers-read",
-  # "s3-bucket-AuthenticatedUsers-read_acp",
-  # "s3-bucket-AuthenticatedUsers-write",
-  # "s3-bucket-AuthenticatedUsers-write_acp",
+  "s3-bucket-AllUsers-read",
+  "s3-bucket-AllUsers-read_acp",
+  "s3-bucket-AllUsers-write",
+  "s3-bucket-AllUsers-write_acp",
+  "s3-bucket-AuthenticatedUsers-read",
+  "s3-bucket-AuthenticatedUsers-read_acp",
+  "s3-bucket-AuthenticatedUsers-write",
+  "s3-bucket-AuthenticatedUsers-write_acp",
   "s3-bucket-allowing-cleartext",
-  #"s3-bucket-no-default-encryption",
+  "s3-bucket-no-default-encryption",
   "s3-bucket-no-logging",
   "s3-bucket-no-mfa-delete",
   "s3-bucket-no-versioning",
-  #"s3-bucket-world-Delete-policy",
-  #"s3-bucket-world-Get-policy",
-  #"s3-bucket-world-List-policy",
-  #"s3-bucket-world-Manage-policy",
-  #"s3-bucket-world-Put-policy",
-  #"s3-bucket-world-policy-star"
+  "s3-bucket-world-Delete-policy",
+  "s3-bucket-world-Get-policy",
+  "s3-bucket-world-List-policy",
+  "s3-bucket-world-Manage-policy",
+  "s3-bucket-world-Put-policy",
+  "s3-bucket-world-policy-star"
 ]
 
 secretsmanager_checks = []
