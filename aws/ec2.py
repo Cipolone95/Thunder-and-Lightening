@@ -8,6 +8,27 @@ from pathlib import Path
 #Logic for parsing the scoutsuite file for s3 related checks.
 #This is to help separate the code from all being lumped together. 
 
+def getIMDSInfo(check, data):
+    
+    ec2Instances = []
+    vulnerableResourceNames = []
+
+    regions = data.get("services", {}).get("ec2", {}).get("regions", {})
+
+    for region_name, region_data in regions.items():
+        vpcs = region_data.get("vpcs", {})
+        for vpc_id, vpc_data in vpcs.items():
+            instances = vpc_data.get("instances", {})
+            ec2Instances.extend(instances.items())
+
+    for instance_name, instance_data in ec2Instances:
+        httpTokens = instance_data.get("metadata_options", {}).get("HttpTokens")
+        if httpTokens == "optional":
+            resourceName = instance_data.get("arn", {})
+            vulnerableResourceNames.append(resourceName)
+            print(arn)
+
+    return vulnerableResourceNames
 
 
 
@@ -65,6 +86,8 @@ def getResources(data, service, check):
                     "ec2-security-group-whitelists-aws",
                     "ec2-unused-security-group"):
         vulnerableResourceNames = getStandardARNs(finding, check, data)
+    elif check == "ec2-IMDSv1":
+        vulnerableResourceNames = getIMDSInfo(check, data)
     else:
         print(f"[!] HELP! {check} is a new check and needs some logic!")
     

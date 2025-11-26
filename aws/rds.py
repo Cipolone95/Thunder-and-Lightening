@@ -36,7 +36,7 @@ def getResources(data, service, check):
     #flagged = finding.get("flagged_items", [])
 
 
-    if check != " "
+    if check != " ":
         print(f"[!] HELP! {check} is a new check and needs some logic!")
     
         

@@ -49,35 +49,26 @@ def get_vulnerable_resources(outputDir, data, service):
     for check in getattr(variables, f"{service}_checks"):
         finding = findings.get(check, {})
         flagged = finding.get("flagged_items", 0)
-        if flagged > 0:
+        if (flagged > 0) or (check == "ec2-IMDSv1"):
 
-            testCheckList = [
-                # "iam-user-without-mfa",
-                # "iam-root-account-no-mfa",
-                # "iam-group-with-no-users",
-                # "iam-managed-policy-allows-NotActions",
-                # "iam-managed-policy-allows-iam-PassRole",
-                # "iam-managed-policy-allows-sts-AssumeRole",
-                # "iam-role-with-inline-policies",
-                # "iam-root-account-with-active-keys",
-                # "iam-user-no-Active-key-rotation",
-                # "iam-user-with-multiple-access-keys",
-                # "iam-user-with-password-and-key",
-                # "iam-user-without-mfa",
-                # "s3-bucket-allowing-cleartext",
-                # "s3-bucket-no-logging",
-                # "s3-bucket-no-mfa-delete",
-                # "s3-bucket-no-versioning"
-            ]
-
-            print(f"[-] {service} vulnerable to check {check}")
+            # Used for debugging
+            # testCheckList = [
+            # ]
+            if check == "ec2-IMDSv1":
+                print(f"[-] Checking for IMDSv1 in use.")
+            else:
+                print(f"[-] {service} vulnerable to check {check}")
             serviceObject = globals().get(service)
             method = getattr(serviceObject, "getResources")
             vulnerableResourceNames = method(data, service, check)
-            for arn in vulnerableResourceNames:
-                print(arn)
-            print("\n")
-            writeOutputFile(outputDir, service, check, vulnerableResourceNames)
+            
+            if vulnerableResourceNames:
+                for arn in vulnerableResourceNames:
+                    print(arn)
+                print("\n")
+                writeOutputFile(outputDir, service, check, vulnerableResourceNames)
+            else:
+                print("[!] No vulnerable resources found!")
 
 
     #return list(resourceNames)

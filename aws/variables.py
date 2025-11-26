@@ -61,7 +61,8 @@ ec2_checks = [
   "ec2-security-group-opens-plaintext-port-Telnet",
   "ec2-security-group-opens-port-range",
   "ec2-security-group-whitelists-aws",
-  "ec2-unused-security-group"
+  "ec2-unused-security-group",
+  "ec2-IMDSv1"
 ]
 
 efs_checks = []
