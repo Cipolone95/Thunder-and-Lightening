@@ -5,14 +5,14 @@
 #ScoutSuite AWS Checks
 
 act_checks = [
-  # "acm-certificate-with-close-expiration-date",
-  # "acm-certificate-with-transparency-logging-disabled"
+   "acm-certificate-with-close-expiration-date",
+   "acm-certificate-with-transparency-logging-disabled"
 ]
 
 awslambda_checks = []
 
 cloudformation_checks = [
-  # "cloudformation-stack-with-role"
+   "cloudformation-stack-with-role"
 ]
 
 cloudtrail_checks = [
