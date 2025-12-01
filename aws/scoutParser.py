@@ -11,6 +11,7 @@ import kms
 import ec2
 import rds
 import sns
+import cloudtrail
 
 def load_scoutsuite_js(path):
     """
@@ -26,11 +27,13 @@ def load_scoutsuite_js(path):
     
     return json.loads(data)
 
-def writeOutputFile(path, file, check, resources):
-    directory = Path(path)
-    directory.mkdir(parents=True, exist_ok=True)
+def writeOutputFile(outputDir, subDir, file, check, resources):
+    outputDirectory = Path(outputDir)
+    outputDirectory.mkdir(parents=True, exist_ok=True)
+    if subDir != "":
+        outputDirectory = outputDirectory / subDir
     fileName = f"{file}_checks.txt"
-    filepath = directory / fileName
+    filepath = outputDirectory / fileName
     filepath.touch(exist_ok=True)
 
     with open(filepath, "a") as f:
@@ -39,12 +42,9 @@ def writeOutputFile(path, file, check, resources):
             f.write(resource + "\n")
         f.write("\n")
 
-def get_vulnerable_resources(outputDir, data, service):
+def get_vulnerable_resources(outputDir, directory, data, service):
     findings = data.get("services", {}).get(service, {}).get("findings", {})
-    #projects = data.get("services", {}).get(service, {}).get("projects", {})
     resourceNames = []
-
-
 
     for check in getattr(variables, f"{service}_checks"):
         finding = findings.get(check, {})
@@ -66,7 +66,7 @@ def get_vulnerable_resources(outputDir, data, service):
                 for arn in vulnerableResourceNames:
                     print(arn)
                 print("\n")
-                writeOutputFile(outputDir, service, check, vulnerableResourceNames)
+                writeOutputFile(outputDir, directory, service, check, vulnerableResourceNames)
             else:
                 print("[!] No vulnerable resources found!")
 
@@ -95,17 +95,17 @@ def main():
         data = load_scoutsuite_js(args.input_file)
         for service in services:
             print(f"[+] Checking service {service} for misconfigurations.")
-            get_vulnerable_resources(args.output_directory, data, service)
+            get_vulnerable_resources(args.output_directory, "", data, service)
     
-    if args.project_list and args.input_directory:
-        projectFile = args.project_list
-        baseDirectory = Path(args.input_directory)
-        with open(projectFile, "r") as f:
-            for line in f:
-                project = line.strip()
-                ScoutsuiteResultsFile = Path(baseDirectory, project, "scoutsuite-results", (f"scoutsuite_results_{project}.js"))
-                data = load_scoutsuite_js(ScoutsuiteResultsFile)
-                storageNames = get_vulnerable_cloudstorage(data)
+    #if args.project_list and args.input_directory:
+        # projectFile = args.project_list
+        # baseDirectory = Path(args.input_directory)
+        # with open(projectFile, "r") as f:
+        #     for line in f:
+        #         project = line.strip()
+        #         ScoutsuiteResultsFile = Path(baseDirectory, project, "scoutsuite-results", (f"scoutsuite_results_{project}.js"))
+        #         data = load_scoutsuite_js(ScoutsuiteResultsFile)
+        #         storageNames = get_vulnerable_cloudstorage(data)
 
     
     if args.input_directory:
@@ -113,6 +113,10 @@ def main():
         for directory in baseDirectory.iterdir():
             if directory.is_directory():
                 ScoutsuiteResultsFile = Path(baseDirectory, directory, "scoutsuite-results", (f"scoutsuite_results_{directory}.js"))
+                data = load_scoutsuite_js(ScoutsuiteResultsFile)
+                for service in services:
+                    print(f"[+] Checking service {service} for misconfigurations.")
+                    get_vulnerable_resources(args.output_directory, directory, data, service)
                 
     
 

@@ -16,12 +16,15 @@ cloudformation_checks = [
 ]
 
 cloudtrail_checks = [
-  # "cloudtrail-duplicated-global-services-logging",
-  # "cloudtrail-no-data-logging",
-  # "cloudtrail-no-global-services-logging",
-  # "cloudtrail-no-log-file-validation",
-  # "cloudtrail-no-logging",
-  # "cloudtrail-not-configured"
+  "cloudtrail-duplicated-global-services-logging",
+  "cloudtrail-no-cloudwatch-integration",
+  "cloudtrail-no-data-logging",
+  "cloudtrail-no-encryption-with-kms",
+  "cloudtrail-no-global-services-logging",
+  "cloudtrail-no-log-file-validation",
+  "cloudtrail-no-logging",
+  "cloudtrail-not-configured",
+  "cloudtrail-partial-data-logging"
 ]
 
 cloudwatch_checks = [
