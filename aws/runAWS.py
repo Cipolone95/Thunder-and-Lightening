@@ -60,10 +60,10 @@ def backupConfigFile(config_path: Path) -> Path:
 def generateSSOProfiles(
     awsConfigFile: Path,
     accountFile: Path,
-    sso_session,
-    sso_role_name,
-    sso_region,
-    sso_output,
+    ssoSession,
+    ssoRoleName,
+    ssoRegion,
+    ssoOutput
 ):
     # Backup config
     backupPath = backupConfigFile(awsConfigFile)
@@ -80,11 +80,11 @@ def generateSSOProfiles(
         for account in accountList:
             block = (
                 f"[profile {account}]\n"
-                f"sso_session = {sso_session}\n"
+                f"sso_session = {ssoSession}\n"
                 f"sso_account_id = {account}\n"
-                f"sso_role_name = {sso_role_name}\n"
-                f"region = {sso_region}\n"
-                f"output = {sso_output}\n\n"
+                f"sso_role_name = {ssoRoleName}\n"
+                f"region = {ssoRegion}\n"
+                f"output = {ssoOutput}\n\n"
             )
             cfg.write(block)
 
@@ -134,45 +134,48 @@ def assumeRole(
 
 def runScans(authType, account, creds):
 
-    if authType in ("sso","profile"):
-        stuff
+    outputDir = "scoutReports" / account
+    outputDir.mkdir(parents=True, exist_ok=True)
+    
+    if authType == "assumeRole"
+        aws_access_key_id = creds["AccessKeyId"]
+        aws_secret_access_key = creds["SecretAccessKey"]
+        aws_session_token = creds["SessionToken"]
 
-
-def run_scout_for_account(
-    account_id: str,
-    creds: dict,
-    reports_root: Path,
-):
-    output_dir = reports_root / account_id
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    aws_access_key_id = creds["AccessKeyId"]
-    aws_secret_access_key = creds["SecretAccessKey"]
-    aws_session_token = creds["SessionToken"]
-
-    scout_cmd = [
-        "scout",
-        "aws",
-        "--report-dir",
-        str(output_dir),
-        "--access-keys",
-        "--access-key-id",
-        aws_access_key_id,
-        "--secret-access-key",
-        aws_secret_access_key,
-        "--session-token",
-        aws_session_token,
-        "--max-workers",
-        "6",
-        "--no-browser",
-    ]
+        scout_cmd = [
+            "scout",
+            "aws",
+            "--report-dir",
+            str(output_dir),
+            "--access-keys",
+            "--access-key-id",
+            aws_access_key_id,
+            "--secret-access-key",
+            aws_secret_access_key,
+            "--session-token",
+            aws_session_token,
+            "--max-workers",
+            "6",
+            "--no-browser"
+        ]
+    else:
+        scout_cmd = [
+            "scout",
+            "aws",
+            "--report-dir",
+            str(output_dir),
+            "--profile",
+            account,
+            "--max-workers",
+            "6",
+            "--no-browser"
+        ]
 
     result = subprocess.run(scout_cmd)
     if result.returncode == 0:
-        print(f"✅ Scout Suite completed for account {account_id}\n")
+        print(f"[+] Scout Suite completed for account {account}\n")
     else:
-        print(f"❌ Scout Suite failed for account {account_id}\n")
-
+        print(f"[-] Scout Suite failed for account {account}\n")
 
 def main():
     args = parse_args()
@@ -201,6 +204,14 @@ def main():
             ssoRegion,
             ssoOutput
         )
+
+        with accountFile.open("r", encoding="utf-8") as f:
+            for line in f:
+                account = line.strip()
+                #print(f"[+] Processing account: {account}")
+                runScans("sso", account, None)
+        
+
     #If an assume-role name is passed in, we will authenticate using assume-role 
     elif args.assumeRoleName:
         if args.profile:
@@ -222,7 +233,7 @@ def main():
                     if not roleCreds:
                         continue
 
-                    runScans(authType, account, roleCreds)
+                    runScans("assumeRole", account, roleCreds)
         else:
             print(f"[!] Error: A profile must go with assume role. Please specify a profile.\n")
             sys.exit(1)
