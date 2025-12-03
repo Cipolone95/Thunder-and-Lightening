@@ -120,7 +120,7 @@ def assumeRole(
     )
 
     if result.returncode != 0:
-        print(f"❌ Failed to assume role for account {account}")
+        print(f"[-] Failed to assume role for account {account}")
         return None
 
     creds_json = result.stdout
@@ -128,7 +128,7 @@ def assumeRole(
         data = json.loads(creds_json)
         return data["Credentials"]
     except (KeyError, json.JSONDecodeError) as e:
-        print(f"❌ Error parsing credentials JSON for {account_id}: {e}")
+        print(f"[-] Error parsing credentials JSON for {account}: {e}")
         return None
 
 
