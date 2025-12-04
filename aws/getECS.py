@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import boto3
+from pathlib import Path
 
 aws_regions = [
     "us-east-1",
@@ -9,7 +10,7 @@ aws_regions = [
     "us-west-2"
 ]
 
-def list_ecs_env_vars(region, profile):
+def list_ecs_env_vars(profile):
     
     """
     List Lambda functions and print their names + environment variables.
@@ -20,43 +21,54 @@ def list_ecs_env_vars(region, profile):
     else:
         session = boto3.Session()
    
+    for region in aws_regions:
 
-    client = session.client("ecs", region_name=region)
+        print(f"[+] Checking Region {region}")
+        client = session.client("ecs", region_name=region)
 
-    # List functions
-    response = client.list_task_definitions()
+        response = client.list_task_definitions()
 
-    task_defs = response.get("taskDefinitionArns", [])
-    if not task_defs:
-        print(f"[-] No Task Definitions found in region {region} ")
+        task_defs = response.get("taskDefinitionArns", [])
+        if not task_defs:
+            print(f"[-] No Task Definitions found in region {region} ")
+            continue
 
-    for task_arn in task_defs:
-            td = client.describe_task_definition(taskDefinition=task_arn)
-            task_def = td["taskDefinition"]
+        for task_arn in task_defs:
+                td = client.describe_task_definition(taskDefinition=task_arn)
+                task_def = td["taskDefinition"]
 
-            print(f"Task Definition: {task_arn}")
+                #print(f"Task Definition: {task_arn}")
 
-            container_defs = task_def.get("containerDefinitions", [])
+                container_defs = task_def.get("containerDefinitions", [])
 
-            for container in container_defs:
-                cname = container["name"]
-                env_list = container.get("environment", [])
+                for container in container_defs:
+                    cname = container["name"]
+                    env_list = container.get("environment", [])
 
-                print(f"  Container: {cname}")
+                    #print(f"Container: {cname}")
 
-                if env_list:
-                    print("    Environment Variables:")
-                    for entry in env_list:
-                        print(f"      {entry['name']} = {entry['value']}")
-                else:
-                    print("    No environment variables.")
+                    if env_list:
+                        writeOutputFile(f"Task Definition: {task_arn}")
+                        writeOutputFile(f"Container: {cname}")
+                        #print("Environment Variables:")
+                        writeOutputFile("Environment Variables:")
+                        for entry in env_list:
+                            #print(f"{entry['name']} = {entry['value']}")
+                            writeOutputFile(f"{entry['name']} = {entry['value']}")
+                    # else:
+                    #     print("No environment variables.")
 
-            print("")
+                #print("")
+                writeOutputFile("")
         
+def writeOutputFile(line):
+    fileName = Path(f"ECS_env_vars.txt")
+    fileName.touch(exist_ok=True)
+    with open(fileName, "a") as f:
+        f.write(line + "\n")
 
 def main():
-    for region in aws_regions:
-        list_ecs_env_vars(region, None)
+    list_ecs_env_vars(None)
 
 if __name__ == "__main__":
     main()
