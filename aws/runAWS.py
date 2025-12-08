@@ -7,6 +7,8 @@ import shutil
 import subprocess
 import time
 import sys
+import runScout
+import getLambda
 from pathlib import Path
 
 
@@ -134,48 +136,9 @@ def assumeRole(
 
 def runScans(authType, account, creds):
 
-    outputDir = "scoutReports" / account
-    outputDir.mkdir(parents=True, exist_ok=True)
+    runScout.execScout(authType, account, creds)
     
-    if authType == "assumeRole"
-        aws_access_key_id = creds["AccessKeyId"]
-        aws_secret_access_key = creds["SecretAccessKey"]
-        aws_session_token = creds["SessionToken"]
-
-        scout_cmd = [
-            "scout",
-            "aws",
-            "--report-dir",
-            str(output_dir),
-            "--access-keys",
-            "--access-key-id",
-            aws_access_key_id,
-            "--secret-access-key",
-            aws_secret_access_key,
-            "--session-token",
-            aws_session_token,
-            "--max-workers",
-            "6",
-            "--no-browser"
-        ]
-    else:
-        scout_cmd = [
-            "scout",
-            "aws",
-            "--report-dir",
-            str(output_dir),
-            "--profile",
-            account,
-            "--max-workers",
-            "6",
-            "--no-browser"
-        ]
-
-    result = subprocess.run(scout_cmd)
-    if result.returncode == 0:
-        print(f"[+] Scout Suite completed for account {account}\n")
-    else:
-        print(f"[-] Scout Suite failed for account {account}\n")
+    
 
 def main():
     args = parse_args()

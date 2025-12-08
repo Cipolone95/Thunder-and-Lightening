@@ -10,7 +10,7 @@ aws_regions = [
     "us-west-2"
 ]
 
-def list_lambda_functions(profile):
+def getLambdaEnvVars(profile):
     
     """
     List Lambda functions and print their names + environment variables.
@@ -34,29 +34,34 @@ def list_lambda_functions(profile):
 
             if env:
                 #print(f"[+] Region {region}")
-                writeOutputFile(f"[+] Region {region}")
+                writeOutputFile(f"[+] Region {region}",profile)
                 print(f"Function: {name}")
-                writeOutputFile(f"Function: {name}")
+                writeOutputFile(f"Function: {name}",profile)
                 print("Environment Variables:")
-                writeOutputFile("Environment Variables:")
+                writeOutputFile("Environment Variables:",profile)
                 for k, v in env.items():
                     print(f"    {k} = {v}")
                     writeOutputFile(f"{k} = {v}")
                 print("")
-                writeOutputFile("")
+                writeOutputFile("",profile)
             #else:
                 #print("No environment variables.")
                 #writeOutputFile("No environment variables.")
         
 
-def writeOutputFile(line):
-    fileName = Path(f"Lambda_env_vars.txt")
-    fileName.touch(exist_ok=True)
-    with open(fileName, "a") as f:
+def writeOutputFile(line, profile):
+
+    outputDirectory = Path("scoutReports" / profile)
+    outputDirectory.mkdir(parents=True, exist_ok=True)
+
+    fileName = f"Lambda_env_vars.txt"
+    filepath = outputDirectory / fileName
+    filepath.touch(exist_ok=True)
+    with open(filePath, "a") as f:
         f.write(line + "\n")
 
 def main():
-    list_lambda_functions(None)
+    getLambdaEnvVars(None)
 
 if __name__ == "__main__":
     main()
