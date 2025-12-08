@@ -137,6 +137,7 @@ def assumeRole(
 def runScans(authType, account, creds):
 
     runScout.execScout(authType, account, creds)
+    getLambda.getLambdaEnvVars(account)
     
     
 
