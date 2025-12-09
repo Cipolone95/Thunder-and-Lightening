@@ -52,7 +52,7 @@ def backupConfigFile(config_path: Path) -> Path:
     backup_path = config_path.with_name(config_path.name + f".bak.{timestamp}")
     backup_path.parent.mkdir(parents=True, exist_ok=True)
     if config_path.exists():
-        shutil.copy2(config_path, backup_path) if config_path.exists() 
+        shutil.copy2(config_path, backup_path)
     else:
         backup_path.touch()
     
@@ -73,9 +73,8 @@ def generateSSOProfiles(
 
     
     accountList = []
-    with accountFile.open("r") as f:
-        accountID = line.strip()
-        accountList.append(accountID)
+    with accountFile.open("r", encoding="utf-8") as f:
+        accountList = f.read().splitlines()
 
     # Append profiles to config
     with awsConfigFile.open("a", encoding="utf-8") as cfg:
@@ -136,7 +135,11 @@ def assumeRole(
 
 def runScans(authType, account, creds):
 
-    runScout.execScout(authType, account, creds)
+    #Ensuring the output directory is created before any scans are ran. 
+    #outputDir = "output"
+    #outputDir.mkdir(parents=True, exist_ok=True)
+
+    runScout.execScout(authType, account, creds, None)
     getLambda.getLambdaEnvVars(account)
     
     
@@ -148,6 +151,10 @@ def main():
         print(f"[!] Error: Cannot specify both SSO and Assume Role.\n")
         sys.exit(1)
     
+    awsAccountsFile = args.accounts
+    awsProfile = args.profile
+    awsAssumeRoleName = args.assumeRoleName
+
     # If SSO flag is set, generate SSO profiles in ~/.aws/config
     if args.sso:
 
@@ -159,17 +166,18 @@ def main():
 
         #Setting AWS config file  
         awsConfigFile = Path(os.path.expanduser("~")) / ".aws" / "config"
+        
 
         generateSSOProfiles(
             awsConfigFile,
-            accountFile,
+            awsAccountsFile,
             ssoSession,
             ssoRoleName,
             ssoRegion,
             ssoOutput
         )
 
-        with accountFile.open("r", encoding="utf-8") as f:
+        with awsAccountsFile.open("r", encoding="utf-8") as f:
             for line in f:
                 account = line.strip()
                 #print(f"[+] Processing account: {account}")
@@ -177,21 +185,21 @@ def main():
         
 
     #If an assume-role name is passed in, we will authenticate using assume-role 
-    elif args.assumeRoleName:
+    elif awsAssumeRoleName:
         if args.profile:
             sessionName = "ScoutSession"
 
             # Loop through accounts and run Scout Suite
-            with accountFile.open("r", encoding="utf-8") as f:
+            with awsAccountsFile.open("r", encoding="utf-8") as f:
                 for line in f:
                     account = line.strip()
                     print(f"[+] Processing account: {account}")
 
                     roleCreds = assumeRole(
                         account_id=account,
-                        role_name=assumeRoleName,
+                        role_name=awsAssumeRoleName,
                         session_name=sessionName,
-                        profile=profile,
+                        profile=awsProfile,
                     )
 
                     if not roleCreds:
@@ -203,6 +211,13 @@ def main():
             sys.exit(1)
     else:
         #A this point only a profile was specified so that is what will be used 
+        with awsAccountsFile.open("r", encoding="utf-8") as f:
+            for line in f:
+                account = line.strip()
+                #print(f"[+] Processing account: {account}")
+                runScans("profile", account, None)
+
+
 
 if __name__ == "__main__":
     main()
