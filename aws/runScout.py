@@ -52,8 +52,6 @@ def execScout (authType, account, creds, outputDirectory):
         print(f"[-] Scout Suite failed for account {account}\n")
 
 
-
-
 def main():
     
     parser = argparse.ArgumentParser(description="Parses ScoutSuite data. This script reviews the scoutsuite data and collects info on the provided cloud service(s).")
@@ -70,7 +68,6 @@ def main():
             execScout("profile", account, None, args.output_directory)
     
     
-
 
 if __name__ == "__main__":
     main()
