@@ -4,7 +4,7 @@
 
 #ScoutSuite AWS Checks
 
-act_checks = [
+acm_checks = [
    "acm-certificate-with-close-expiration-date",
    "acm-certificate-with-transparency-logging-disabled"
 ]

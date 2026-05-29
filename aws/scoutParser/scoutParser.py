@@ -34,6 +34,7 @@ def writeOutputFile(outputDir, subDir, file, check, resources):
     outputDirectory.mkdir(parents=True, exist_ok=True)
     if subDir != "":
         outputDirectory = outputDirectory / subDir
+        outputDirectory.mkdir(parents=True, exist_ok=True)
     fileName = f"{file}_checks.txt"
     filepath = outputDirectory / fileName
     filepath.touch(exist_ok=True)
@@ -139,25 +140,28 @@ def main():
     #                 get_vulnerable_resources(args.output_directory, directory, data, service)
     
 
-        if args.input_directory:
-            baseDirectory = Path(args.input_directory)
-            accountIDList = []
-            if args.account_list:
-                accountFile = args.account_list
-                with accountFile.open("r") as f:
+    if args.input_directory:
+        baseDirectory = Path(args.input_directory)
+        accountIDList = []
+        if args.account_list:
+            accountFile = Path(args.account_list)
+            with accountFile.open("r") as f:
+                for line in f:
                     accountID = line.strip()
+                    print(accountID)
                     accountIDList.append(accountID)
-            else:
-                for directory in baseDirectory.iterdir():
-                    if directory.is_directory() and directory != "AffectedAssets":
-                        accountIDList.append(accountID)
-            
-            for directory in accountIDList:
-                ScoutsuiteResultsFile = Path(baseDirectory, directory, "scoutsuite-results", (f"scoutsuite_results_{directory}.js"))
-                data = load_scoutsuite_js(ScoutsuiteResultsFile)
-                for service in services:
-                    print(f"[+] Checking service {service} for misconfigurations.")
-                    get_vulnerable_resources(args.output_directory, directory, data, service)
+        else:
+            for directory in baseDirectory.iterdir():
+                if directory.is_dir() and directory.name != "AffectedAssets":
+                    accountIDList.append(directory.name)
+        
+        for directory in accountIDList:
+            print(directory)
+            ScoutsuiteResultsFile = Path(baseDirectory, directory, "scoutsuite-results", (f"scoutsuite_results_aws-{directory}.js"))
+            data = load_scoutsuite_js(ScoutsuiteResultsFile)
+            for service in services:
+                print(f"[+] Checking service {service} for misconfigurations.")
+                get_vulnerable_resources(args.output_directory, directory, data, service)
                 
     
 
