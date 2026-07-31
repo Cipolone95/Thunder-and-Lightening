@@ -1,0 +1,23 @@
+#!/bin/bash
+
+
+while read -r project; do
+  echo "=== $project ==="
+
+  gcloud projects get-iam-policy "$project" \
+    --flatten="bindings[].members" \
+    --filter="bindings.role:(roles/owner OR roles/editor) AND bindings.members:serviceAccount" \
+    --format="value(bindings.members,bindings.role)" 2>/dev/null | \
+  while IFS=$'\t' read -r member role; do
+    email="${member#serviceAccount:}"
+
+    if [[ "$email" == *"@cloudservices.gserviceaccount.com" ]] || \
+       [[ "$email" == *"-compute@developer.gserviceaccount.com" ]] || \
+       [[ "$email" == *"@appspot.gserviceaccount.com" ]] || \
+       [[ "$email" == *"@gcp-sa-"* ]]; then
+      echo "$email  ($role)" >> default_sas.txt
+    else
+      echo "$email  ($role)" >> custom_sas.txt
+    fi
+  done
+done < projectIDPete.txt
